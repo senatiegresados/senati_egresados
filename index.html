@@ -195,6 +195,122 @@
   .mat-dl:hover { background:var(--blue); color:#fff; }
   .toast { position:fixed; bottom:28px; right:28px; background:var(--text); color:#fff; padding:12px 20px; border-radius:10px; font-size:13.5px; font-weight:600; z-index:999; opacity:0; transform:translateY(10px); transition:all 0.3s; pointer-events:none; }
   .toast.show { opacity:1; transform:translateY(0); }
+
+  /* ===== RESPONSIVE MÓVIL ===== */
+  @media (max-width: 768px) {
+    :root { --sidebar-w: 0px; }
+
+    .sidebar {
+      position: fixed;
+      left: -280px;
+      width: 260px !important;
+      transition: left 0.3s ease;
+      z-index: 200;
+    }
+    .sidebar.open { left: 0; }
+
+    .overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.4);
+      z-index: 199;
+    }
+    .overlay.show { display: block; }
+
+    .main { margin-left: 0 !important; width: 100%; }
+
+    .topbar {
+      padding: 0 14px;
+      gap: 10px;
+    }
+    .topbar-search { display: none; }
+
+    .btn-menu-mobile {
+      display: flex !important;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg);
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      width: 38px;
+      height: 38px;
+      font-size: 18px;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .content { padding: 16px 14px; }
+
+    /* Welcome banner */
+    .welcome-banner {
+      flex-direction: column;
+      padding: 20px 18px;
+      gap: 14px;
+      text-align: center;
+    }
+    .wb-avatar { width: 60px; height: 60px; }
+    .wb-text h2 { font-size: 17px; }
+    .wb-text p { font-size: 12px; }
+    .wb-tags { justify-content: center; }
+    .egreso-stamp { margin: 0 auto; }
+
+    /* Stats */
+    .stats-row { grid-template-columns: 1fr 1fr; gap: 10px; }
+
+    /* Two col */
+    .two-col { grid-template-columns: 1fr; gap: 14px; }
+
+    /* Info grid perfil */
+    .info-grid { grid-template-columns: 1fr; }
+
+    /* Doc fields */
+    .doc-fields { grid-template-columns: 1fr; }
+
+    /* Cert grid */
+    .cert-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
+
+    /* Semestres */
+    .card[style*="grid-template-columns:repeat(3"] { grid-template-columns: 1fr !important; }
+
+    /* Tabla historial scroll horizontal */
+    table { display: block; overflow-x: auto; white-space: nowrap; }
+
+    /* Perfil hero */
+    .profile-hero {
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 20px 18px;
+    }
+    .ph-badges { justify-content: center; }
+
+    /* Doc actions */
+    .doc-actions { flex-wrap: wrap; }
+    .btn-doc { flex: 1; min-width: 120px; text-align: center; }
+
+    /* Experiencia */
+    .exp-item { flex-direction: column; gap: 12px; }
+
+    /* Resumen egreso */
+    div[style*="grid-template-columns:repeat(4,1fr)"] {
+      display: grid !important;
+      grid-template-columns: 1fr 1fr !important;
+    }
+
+    /* Login */
+    .login-box { padding: 32px 22px; }
+
+    #platform { flex-direction: row; }
+  }
+
+  @media (max-width: 420px) {
+    .stats-row { grid-template-columns: 1fr 1fr; }
+    .cert-grid { grid-template-columns: 1fr; }
+    .wb-text h2 { font-size: 15px; }
+  }
+
+  .btn-menu-mobile { display: none; }
 </style>
 </head>
 <body>
@@ -258,7 +374,9 @@
   </div>
 
   <div class="main">
+    <div class="overlay" id="overlay" onclick="closeSidebar()"></div>
     <div class="topbar">
+      <button class="btn-menu-mobile" onclick="toggleSidebar()">☰</button>
       <div class="topbar-title" id="topbar-title">Inicio</div>
       <div class="topbar-search"><span>🔍</span><input type="text" placeholder="Buscar certificados, recursos..." /></div>
       <div class="notif-btn" onclick="showToast('🔔 Tienes 2 ofertas laborales nuevas')">🔔 <span class="notif-dot"></span></div>
@@ -604,6 +722,23 @@
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
+  }
+
+  function toggleSidebar() {
+    const sb = document.querySelector('.sidebar');
+    const ov = document.getElementById('overlay');
+    sb.classList.toggle('open');
+    ov.classList.toggle('show');
+  }
+  function closeSidebar() {
+    document.querySelector('.sidebar').classList.remove('open');
+    document.getElementById('overlay').classList.remove('show');
+  }
+  // Cerrar sidebar al cambiar de página en móvil
+  const _goPage = goPage;
+  goPage = function(name, el) {
+    _goPage(name, el);
+    closeSidebar();
   }
   document.addEventListener('keydown', e => {
     if (e.key === 'Enter' && document.getElementById('login-screen').style.display !== 'none') doLogin();
